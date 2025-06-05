@@ -270,7 +270,7 @@ def main():
         plt.ylabel("t-SNE component 2")
         plt.title(f"t-SNE visualization of VAE Latent Space)")
         plt.grid(True)
-        plt.savefig(f'vae_tsne_latent_space_perplexity{perplexity_val}.png')
+        plt.savefig(f'vae_tsne_latent_space.png')
         print(f"t-SNE plot saved as 'vae_tsne_latent_space.png'")
 
     plot_tsne(model, test_loader, device, num_batches=50, perplexity_val=30)
