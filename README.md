@@ -16,7 +16,7 @@
 
 1.1. Motivación y contexto
 - La importancia de los modelos generativos (VAEs, GANs) en el deep learning.
-- El papel del espacio latente en la representación de los datos aprendidos por estos modelos.
+- La importancia del espacio latente en la representación de los datos aprendidos por estos modelos.
   
 1.2. Planteamiento del problema
 - ¿Son los espacios latentes de diferentes modelos (VAE vs. GAN) similares si se entrenan con el mismo dataset?
