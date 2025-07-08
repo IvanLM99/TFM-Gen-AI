@@ -114,3 +114,8 @@ problemas, limitaciones?
 
 
 
+mlp 1 capa entrada 3 - 6 - 3 -
+activation: identity
+vae a gan y al reves
+cojo números (vectores) -> mlcp classifier -> desproyectar en gan -> veure resultat
+MSE
