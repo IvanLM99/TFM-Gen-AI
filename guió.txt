@@ -27,3 +27,19 @@ Altres coses d'interès
 =============
 PyTorch Model Compare: https://github.com/AntixK/PyTorch-Model-Compare
 
+
+
+
+
+
+
+07/07
+
+mlp 1 capa entrada 3 - 6 - 3 -
+activation: identity
+vae a gan y al reves
+cojo números (vectores) -> mlcp classifier -> desproyectar en gan -> veure resultat
+MSE
+
+
+14/07
