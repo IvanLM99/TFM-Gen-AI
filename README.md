@@ -1,14 +1,6 @@
 # TFM - Gen-AI
 
 
-
-- projeccio amb VAE damunt GAN per veure relacio o quina tranformacio lineal es pot fer
-- cifar 10 
-- seccio metodolgia mes teorica (vae, gan, gan inversion)
-
-=====================================================================================================================
-=====================================================================================================================
-
 Índice de la memoria:
 
 
@@ -111,11 +103,3 @@ problemas, limitaciones?
 - 
   
 
-
-
-
-mlp 1 capa entrada 3 - 6 - 3 -
-activation: identity
-vae a gan y al reves
-cojo números (vectores) -> mlcp classifier -> desproyectar en gan -> veure resultat
-MSE
