@@ -102,4 +102,9 @@ problemas, limitaciones?
 - 
 - 
   
+mlp mes gran
 
+mitajana i desvaicio error
+cnn clasificar mnist
+
+igual pero activation relu
