@@ -108,3 +108,27 @@ mitajana i desvaicio error
 cnn clasificar mnist
 
 igual pero activation relu
+
+--
+--
+-
+-
+-
+-
+
+metodología - 1. base de dades mnist explicar que es
+2. generative models vae i gan
+	explicacio i arquitectura dels meus models
+	en gan -> gan inversión - que problema hay para generar imágenes gan
+	CNN classificacio
+
+3 métricas - MSE 
+	
+4 experimentacio
+	1. vae
+	2. gan
+	3. gan inversions
+	4. MLP
+	5. cnn
+
+5. reusltats
