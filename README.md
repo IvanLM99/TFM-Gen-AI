@@ -132,3 +132,14 @@ metodología - 1. base de dades mnist explicar que es
 	5. cnn
 
 5. reusltats
+
+==================================================
+
+
+experimentacio - hacer experimento entrenando el puente solo con 1 clase "2"
+
+problema con el paper italianos= nomes tenen una clase en les cares 
+
+noltros multi clase
+
+añadir esto en la introducción
