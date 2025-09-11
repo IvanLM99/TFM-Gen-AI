@@ -1,0 +1,279 @@
+2025-09-11 00:57:52,411 [INFO] - Starting VAE-GAN Projection Analysis on device: cuda
+2025-09-11 00:57:52,412 [INFO] - Full log will be saved to: outputs_mlp/experiment_log_2025-09-11_00-57-52.txt
+2025-09-11 00:57:52,412 [INFO] - --- Loading pre-trained VAE and GAN models ---
+2025-09-11 00:57:52,775 [INFO] - 
+--- Loading pre-trained CNN Classifier ---
+2025-09-11 00:57:52,783 [INFO] -     CNN Classifier loaded successfully.
+2025-09-11 00:57:52,784 [INFO] - 
+--- Creating Paired Latent Dataset for Training Bridges ---
+2025-09-11 00:57:55,931 [INFO] - Dataset split into 60000 training and 15000 test samples.
+2025-09-11 00:57:55,932 [INFO] - 
+--- Creating latent space datasets for visualization plots ---
+2025-09-11 00:57:59,459 [INFO] - 
+
+================================================================================
+2025-09-11 00:57:59,459 [INFO] - ### MULTI-CLASS: BASELINE: SMALL MLP WITH IDENTITY ACTIVATION ###
+2025-09-11 00:57:59,459 [INFO] - ================================================================================
+
+2025-09-11 00:57:59,462 [INFO] - Outputs for this experiment will be saved in: 'outputs_mlp/multi_class/baseline_small_identity'
+2025-09-11 00:57:59,462 [INFO] - --- Training MLP Bridge for VAE -> GAN (baseline_small_identity) ---
+2025-09-11 00:57:59,462 [INFO] -     Architecture: hidden_layer_sizes=(2, 4, 2), activation='identity'
+2025-09-11 00:57:59,462 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 00:58:00,173 [INFO] -     MLP Regressor for VAE -> GAN (baseline_small_identity) trained. Final Training MSE on vectors: 0.653440
+2025-09-11 00:58:00,173 [INFO] - --- Training MLP Bridge for GAN -> VAE (baseline_small_identity) ---
+2025-09-11 00:58:00,173 [INFO] -     Architecture: hidden_layer_sizes=(2, 4, 2), activation='identity'
+2025-09-11 00:58:00,174 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 00:58:00,942 [INFO] -     MLP Regressor for GAN -> VAE (baseline_small_identity) trained. Final Training MSE on vectors: 0.455567
+2025-09-11 00:58:00,943 [INFO] - 
+--- Running Qualitative Visualizations ---
+2025-09-11 00:58:01,993 [INFO] -     Performing GAN Inversion for visualization #1...
+2025-09-11 00:58:07,552 [INFO] -     Performing GAN Inversion for visualization #2...
+2025-09-11 00:58:13,056 [INFO] -     Performing GAN Inversion for visualization #3...
+2025-09-11 00:58:17,442 [INFO] -     3 visualization pairs created.
+2025-09-11 00:58:17,443 [INFO] - --- Evaluating Quantitative Quality for VAE->GAN ---
+2025-09-11 00:58:20,468 [INFO] - --- Quality Report for VAE->GAN (Config: identity, Layers: (2, 4, 2)) ---
+2025-09-11 00:58:20,469 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 00:58:20,469 [INFO] -     - Projected Image Classification Accuracy: 19.70%
+2025-09-11 00:58:20,470 [INFO] -     - Image Reconstruction MSE (Median): 0.110199 (+/- 0.033362)
+2025-09-11 00:58:20,470 [INFO] - --- Evaluating Quantitative Quality for GAN->VAE ---
+2025-09-11 00:58:23,503 [INFO] - --- Quality Report for GAN->VAE (Config: identity, Layers: (2, 4, 2)) ---
+2025-09-11 00:58:23,503 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 00:58:23,503 [INFO] -     - Projected Image Classification Accuracy: 26.10%
+2025-09-11 00:58:23,504 [INFO] -     - Image Reconstruction MSE (Median): 0.080608 (+/- 0.017641)
+2025-09-11 00:58:23,504 [INFO] - 
+
+================================================================================
+2025-09-11 00:58:23,504 [INFO] - ### MULTI-CLASS: EXPERIMENT 1: LARGE MLP WITH IDENTITY ACTIVATION ###
+2025-09-11 00:58:23,504 [INFO] - ================================================================================
+
+2025-09-11 00:58:23,506 [INFO] - Outputs for this experiment will be saved in: 'outputs_mlp/multi_class/exp1_large_identity'
+2025-09-11 00:58:23,507 [INFO] - --- Training MLP Bridge for VAE -> GAN (exp1_large_identity) ---
+2025-09-11 00:58:23,507 [INFO] -     Architecture: hidden_layer_sizes=(2, 8, 2), activation='identity'
+2025-09-11 00:58:23,507 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 00:58:24,140 [INFO] -     MLP Regressor for VAE -> GAN (exp1_large_identity) trained. Final Training MSE on vectors: 0.653337
+2025-09-11 00:58:24,140 [INFO] - --- Training MLP Bridge for GAN -> VAE (exp1_large_identity) ---
+2025-09-11 00:58:24,140 [INFO] -     Architecture: hidden_layer_sizes=(2, 8, 2), activation='identity'
+2025-09-11 00:58:24,140 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 00:58:24,724 [INFO] -     MLP Regressor for GAN -> VAE (exp1_large_identity) trained. Final Training MSE on vectors: 0.455594
+2025-09-11 00:58:24,724 [INFO] - 
+--- Running Qualitative Visualizations ---
+2025-09-11 00:58:25,775 [INFO] -     Performing GAN Inversion for visualization #1...
+2025-09-11 00:58:31,245 [INFO] -     Performing GAN Inversion for visualization #2...
+2025-09-11 00:58:36,474 [INFO] -     Performing GAN Inversion for visualization #3...
+2025-09-11 00:58:40,947 [INFO] -     3 visualization pairs created.
+2025-09-11 00:58:40,948 [INFO] - --- Evaluating Quantitative Quality for VAE->GAN ---
+2025-09-11 00:58:43,689 [INFO] - --- Quality Report for VAE->GAN (Config: identity, Layers: (2, 8, 2)) ---
+2025-09-11 00:58:43,690 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 00:58:43,690 [INFO] -     - Projected Image Classification Accuracy: 20.30%
+2025-09-11 00:58:43,690 [INFO] -     - Image Reconstruction MSE (Median): 0.112348 (+/- 0.031628)
+2025-09-11 00:58:43,690 [INFO] - --- Evaluating Quantitative Quality for GAN->VAE ---
+2025-09-11 00:58:46,680 [INFO] - --- Quality Report for GAN->VAE (Config: identity, Layers: (2, 8, 2)) ---
+2025-09-11 00:58:46,680 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 00:58:46,681 [INFO] -     - Projected Image Classification Accuracy: 26.10%
+2025-09-11 00:58:46,681 [INFO] -     - Image Reconstruction MSE (Median): 0.081142 (+/- 0.017866)
+2025-09-11 00:58:46,681 [INFO] - 
+
+================================================================================
+2025-09-11 00:58:46,682 [INFO] - ### MULTI-CLASS: EXPERIMENT 2: SMALL MLP WITH RELU ACTIVATION ###
+2025-09-11 00:58:46,682 [INFO] - ================================================================================
+
+2025-09-11 00:58:46,688 [INFO] - Outputs for this experiment will be saved in: 'outputs_mlp/multi_class/exp2_small_relu'
+2025-09-11 00:58:46,688 [INFO] - --- Training MLP Bridge for VAE -> GAN (exp2_small_relu) ---
+2025-09-11 00:58:46,688 [INFO] -     Architecture: hidden_layer_sizes=(2, 4, 2), activation='relu'
+2025-09-11 00:58:46,688 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 00:58:49,224 [INFO] -     MLP Regressor for VAE -> GAN (exp2_small_relu) trained. Final Training MSE on vectors: 0.589462
+2025-09-11 00:58:49,225 [INFO] - --- Training MLP Bridge for GAN -> VAE (exp2_small_relu) ---
+2025-09-11 00:58:49,225 [INFO] -     Architecture: hidden_layer_sizes=(2, 4, 2), activation='relu'
+2025-09-11 00:58:49,225 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 00:58:51,486 [INFO] -     MLP Regressor for GAN -> VAE (exp2_small_relu) trained. Final Training MSE on vectors: 0.311190
+2025-09-11 00:58:51,486 [INFO] - 
+--- Running Qualitative Visualizations ---
+2025-09-11 00:58:52,522 [INFO] -     Performing GAN Inversion for visualization #1...
+2025-09-11 00:58:57,963 [INFO] -     Performing GAN Inversion for visualization #2...
+2025-09-11 00:59:03,277 [INFO] -     Performing GAN Inversion for visualization #3...
+2025-09-11 00:59:07,564 [INFO] -     3 visualization pairs created.
+2025-09-11 00:59:07,565 [INFO] - --- Evaluating Quantitative Quality for VAE->GAN ---
+2025-09-11 00:59:10,292 [INFO] - --- Quality Report for VAE->GAN (Config: relu, Layers: (2, 4, 2)) ---
+2025-09-11 00:59:10,292 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 00:59:10,293 [INFO] -     - Projected Image Classification Accuracy: 26.70%
+2025-09-11 00:59:10,293 [INFO] -     - Image Reconstruction MSE (Median): 0.109494 (+/- 0.036263)
+2025-09-11 00:59:10,293 [INFO] - --- Evaluating Quantitative Quality for GAN->VAE ---
+2025-09-11 00:59:13,292 [INFO] - --- Quality Report for GAN->VAE (Config: relu, Layers: (2, 4, 2)) ---
+2025-09-11 00:59:13,292 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 00:59:13,292 [INFO] -     - Projected Image Classification Accuracy: 33.40%
+2025-09-11 00:59:13,293 [INFO] -     - Image Reconstruction MSE (Median): 0.073461 (+/- 0.019455)
+2025-09-11 00:59:13,293 [INFO] - 
+
+================================================================================
+2025-09-11 00:59:13,293 [INFO] - ### MULTI-CLASS: EXPERIMENT 3: LARGE MLP WITH RELU ACTIVATION ###
+2025-09-11 00:59:13,293 [INFO] - ================================================================================
+
+2025-09-11 00:59:13,295 [INFO] - Outputs for this experiment will be saved in: 'outputs_mlp/multi_class/exp3_large_relu'
+2025-09-11 00:59:13,295 [INFO] - --- Training MLP Bridge for VAE -> GAN (exp3_large_relu) ---
+2025-09-11 00:59:13,296 [INFO] -     Architecture: hidden_layer_sizes=(2, 8, 2), activation='relu'
+2025-09-11 00:59:13,296 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 00:59:14,173 [INFO] -     MLP Regressor for VAE -> GAN (exp3_large_relu) trained. Final Training MSE on vectors: 0.991034
+2025-09-11 00:59:14,173 [INFO] - --- Training MLP Bridge for GAN -> VAE (exp3_large_relu) ---
+2025-09-11 00:59:14,174 [INFO] -     Architecture: hidden_layer_sizes=(2, 8, 2), activation='relu'
+2025-09-11 00:59:14,174 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 00:59:15,030 [INFO] -     MLP Regressor for GAN -> VAE (exp3_large_relu) trained. Final Training MSE on vectors: 0.910837
+2025-09-11 00:59:15,031 [INFO] - 
+--- Running Qualitative Visualizations ---
+2025-09-11 00:59:16,116 [INFO] -     Performing GAN Inversion for visualization #1...
+2025-09-11 00:59:21,641 [INFO] -     Performing GAN Inversion for visualization #2...
+2025-09-11 00:59:26,985 [INFO] -     Performing GAN Inversion for visualization #3...
+2025-09-11 00:59:31,432 [INFO] -     3 visualization pairs created.
+2025-09-11 00:59:31,433 [INFO] - --- Evaluating Quantitative Quality for VAE->GAN ---
+2025-09-11 00:59:34,353 [INFO] - --- Quality Report for VAE->GAN (Config: relu, Layers: (2, 8, 2)) ---
+2025-09-11 00:59:34,353 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 00:59:34,353 [INFO] -     - Projected Image Classification Accuracy: 11.30%
+2025-09-11 00:59:34,354 [INFO] -     - Image Reconstruction MSE (Median): 0.111268 (+/- 0.039742)
+2025-09-11 00:59:34,354 [INFO] - --- Evaluating Quantitative Quality for GAN->VAE ---
+2025-09-11 00:59:37,303 [INFO] - --- Quality Report for GAN->VAE (Config: relu, Layers: (2, 8, 2)) ---
+2025-09-11 00:59:37,303 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 00:59:37,303 [INFO] -     - Projected Image Classification Accuracy: 17.80%
+2025-09-11 00:59:37,303 [INFO] -     - Image Reconstruction MSE (Median): 0.092804 (+/- 0.017964)
+2025-09-11 00:59:37,304 [INFO] - 
+
+################################################################################
+2025-09-11 00:59:37,304 [INFO] - ### STARTING SPECIALIZED SINGLE-DIGIT EXPERIMENT FOR DIGIT: '2' ###
+2025-09-11 00:59:37,304 [INFO] - ### (Bridges will be retrained on single-digit data) ###
+2025-09-11 00:59:37,304 [INFO] - ################################################################################
+2025-09-11 00:59:37,304 [INFO] - 
+--- Creating Paired Latent Dataset for ONLY Digit '2' ---
+2025-09-11 01:00:01,454 [INFO] - Dataset for digit '2' split into 8000 training and 2000 test samples.
+2025-09-11 01:00:01,468 [INFO] - Created a filtered test set with 1032 samples of digit '2' for final evaluation.
+2025-09-11 01:00:01,469 [INFO] - 
+
+================================================================================
+2025-09-11 01:00:01,469 [INFO] - ### SPECIALIZED BRIDGE FOR DIGIT '2': BASELINE: SMALL MLP WITH IDENTITY ACTIVATION ###
+2025-09-11 01:00:01,469 [INFO] - ================================================================================
+
+2025-09-11 01:00:01,471 [INFO] - Outputs for this experiment will be saved in: 'outputs_mlp/digit_2_specialized/baseline_small_identity'
+2025-09-11 01:00:01,471 [INFO] - --- Training MLP Bridge for VAE -> GAN (baseline_small_identity) ---
+2025-09-11 01:00:01,472 [INFO] -     Architecture: hidden_layer_sizes=(2, 4, 2), activation='identity'
+2025-09-11 01:00:01,472 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 01:00:01,807 [INFO] -     MLP Regressor for VAE -> GAN (baseline_small_identity) trained. Final Training MSE on vectors: 0.116757
+2025-09-11 01:00:01,808 [INFO] - --- Training MLP Bridge for GAN -> VAE (baseline_small_identity) ---
+2025-09-11 01:00:01,808 [INFO] -     Architecture: hidden_layer_sizes=(2, 4, 2), activation='identity'
+2025-09-11 01:00:01,808 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 01:00:02,056 [INFO] -     MLP Regressor for GAN -> VAE (baseline_small_identity) trained. Final Training MSE on vectors: 0.045663
+2025-09-11 01:00:02,056 [INFO] - 
+--- Running Qualitative Visualizations ---
+2025-09-11 01:00:03,105 [INFO] -     Performing GAN Inversion for visualization #1...
+2025-09-11 01:00:08,525 [INFO] -     Performing GAN Inversion for visualization #2...
+2025-09-11 01:00:13,955 [INFO] -     Performing GAN Inversion for visualization #3...
+2025-09-11 01:00:18,350 [INFO] -     3 visualization pairs created.
+2025-09-11 01:00:18,350 [INFO] - --- Evaluating Quantitative Quality for VAE->GAN ---
+2025-09-11 01:00:21,204 [INFO] - --- Quality Report for VAE->GAN (Config: identity, Layers: (2, 4, 2)) ---
+2025-09-11 01:00:21,205 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 01:00:21,205 [INFO] -     - Projected Image Classification Accuracy: 59.90%
+2025-09-11 01:00:21,205 [INFO] -     - Image Reconstruction MSE (Median): 0.125117 (+/- 0.029330)
+2025-09-11 01:00:21,205 [INFO] - --- Evaluating Quantitative Quality for GAN->VAE ---
+2025-09-11 01:00:24,516 [INFO] - --- Quality Report for GAN->VAE (Config: identity, Layers: (2, 4, 2)) ---
+2025-09-11 01:00:24,517 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 01:00:24,517 [INFO] -     - Projected Image Classification Accuracy: 6.50%
+2025-09-11 01:00:24,517 [INFO] -     - Image Reconstruction MSE (Median): 0.058939 (+/- 0.008866)
+2025-09-11 01:00:24,518 [INFO] - 
+
+================================================================================
+2025-09-11 01:00:24,518 [INFO] - ### SPECIALIZED BRIDGE FOR DIGIT '2': EXPERIMENT 1: LARGE MLP WITH IDENTITY ACTIVATION ###
+2025-09-11 01:00:24,518 [INFO] - ================================================================================
+
+2025-09-11 01:00:24,520 [INFO] - Outputs for this experiment will be saved in: 'outputs_mlp/digit_2_specialized/exp1_large_identity'
+2025-09-11 01:00:24,520 [INFO] - --- Training MLP Bridge for VAE -> GAN (exp1_large_identity) ---
+2025-09-11 01:00:24,520 [INFO] -     Architecture: hidden_layer_sizes=(2, 8, 2), activation='identity'
+2025-09-11 01:00:24,521 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 01:00:24,785 [INFO] -     MLP Regressor for VAE -> GAN (exp1_large_identity) trained. Final Training MSE on vectors: 0.116654
+2025-09-11 01:00:24,785 [INFO] - --- Training MLP Bridge for GAN -> VAE (exp1_large_identity) ---
+2025-09-11 01:00:24,785 [INFO] -     Architecture: hidden_layer_sizes=(2, 8, 2), activation='identity'
+2025-09-11 01:00:24,786 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 01:00:24,900 [INFO] -     MLP Regressor for GAN -> VAE (exp1_large_identity) trained. Final Training MSE on vectors: 0.045742
+2025-09-11 01:00:24,900 [INFO] - 
+--- Running Qualitative Visualizations ---
+2025-09-11 01:00:25,868 [INFO] -     Performing GAN Inversion for visualization #1...
+2025-09-11 01:00:31,102 [INFO] -     Performing GAN Inversion for visualization #2...
+2025-09-11 01:00:36,592 [INFO] -     Performing GAN Inversion for visualization #3...
+2025-09-11 01:00:41,023 [INFO] -     3 visualization pairs created.
+2025-09-11 01:00:41,023 [INFO] - --- Evaluating Quantitative Quality for VAE->GAN ---
+2025-09-11 01:00:43,719 [INFO] - --- Quality Report for VAE->GAN (Config: identity, Layers: (2, 8, 2)) ---
+2025-09-11 01:00:43,720 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 01:00:43,720 [INFO] -     - Projected Image Classification Accuracy: 62.00%
+2025-09-11 01:00:43,720 [INFO] -     - Image Reconstruction MSE (Median): 0.123788 (+/- 0.029355)
+2025-09-11 01:00:43,720 [INFO] - --- Evaluating Quantitative Quality for GAN->VAE ---
+2025-09-11 01:00:46,788 [INFO] - --- Quality Report for GAN->VAE (Config: identity, Layers: (2, 8, 2)) ---
+2025-09-11 01:00:46,788 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 01:00:46,788 [INFO] -     - Projected Image Classification Accuracy: 6.40%
+2025-09-11 01:00:46,789 [INFO] -     - Image Reconstruction MSE (Median): 0.059308 (+/- 0.008695)
+2025-09-11 01:00:46,789 [INFO] - 
+
+================================================================================
+2025-09-11 01:00:46,789 [INFO] - ### SPECIALIZED BRIDGE FOR DIGIT '2': EXPERIMENT 2: SMALL MLP WITH RELU ACTIVATION ###
+2025-09-11 01:00:46,789 [INFO] - ================================================================================
+
+2025-09-11 01:00:46,795 [INFO] - Outputs for this experiment will be saved in: 'outputs_mlp/digit_2_specialized/exp2_small_relu'
+2025-09-11 01:00:46,795 [INFO] - --- Training MLP Bridge for VAE -> GAN (exp2_small_relu) ---
+2025-09-11 01:00:46,795 [INFO] -     Architecture: hidden_layer_sizes=(2, 4, 2), activation='relu'
+2025-09-11 01:00:46,795 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 01:00:46,943 [INFO] -     MLP Regressor for VAE -> GAN (exp2_small_relu) trained. Final Training MSE on vectors: 0.437261
+2025-09-11 01:00:46,943 [INFO] - --- Training MLP Bridge for GAN -> VAE (exp2_small_relu) ---
+2025-09-11 01:00:46,944 [INFO] -     Architecture: hidden_layer_sizes=(2, 4, 2), activation='relu'
+2025-09-11 01:00:46,944 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 01:00:47,127 [INFO] -     MLP Regressor for GAN -> VAE (exp2_small_relu) trained. Final Training MSE on vectors: 0.137313
+2025-09-11 01:00:47,127 [INFO] - 
+--- Running Qualitative Visualizations ---
+2025-09-11 01:00:48,077 [INFO] -     Performing GAN Inversion for visualization #1...
+2025-09-11 01:00:53,399 [INFO] -     Performing GAN Inversion for visualization #2...
+2025-09-11 01:00:58,739 [INFO] -     Performing GAN Inversion for visualization #3...
+2025-09-11 01:01:03,129 [INFO] -     3 visualization pairs created.
+2025-09-11 01:01:03,129 [INFO] - --- Evaluating Quantitative Quality for VAE->GAN ---
+2025-09-11 01:01:05,803 [INFO] - --- Quality Report for VAE->GAN (Config: relu, Layers: (2, 4, 2)) ---
+2025-09-11 01:01:05,803 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 01:01:05,803 [INFO] -     - Projected Image Classification Accuracy: 0.00%
+2025-09-11 01:01:05,804 [INFO] -     - Image Reconstruction MSE (Median): 0.131198 (+/- 0.025817)
+2025-09-11 01:01:05,804 [INFO] - --- Evaluating Quantitative Quality for GAN->VAE ---
+2025-09-11 01:01:08,876 [INFO] - --- Quality Report for GAN->VAE (Config: relu, Layers: (2, 4, 2)) ---
+2025-09-11 01:01:08,876 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 01:01:08,876 [INFO] -     - Projected Image Classification Accuracy: 0.00%
+2025-09-11 01:01:08,877 [INFO] -     - Image Reconstruction MSE (Median): 0.067603 (+/- 0.010337)
+2025-09-11 01:01:08,877 [INFO] - 
+
+================================================================================
+2025-09-11 01:01:08,877 [INFO] - ### SPECIALIZED BRIDGE FOR DIGIT '2': EXPERIMENT 3: LARGE MLP WITH RELU ACTIVATION ###
+2025-09-11 01:01:08,877 [INFO] - ================================================================================
+
+2025-09-11 01:01:08,879 [INFO] - Outputs for this experiment will be saved in: 'outputs_mlp/digit_2_specialized/exp3_large_relu'
+2025-09-11 01:01:08,879 [INFO] - --- Training MLP Bridge for VAE -> GAN (exp3_large_relu) ---
+2025-09-11 01:01:08,879 [INFO] -     Architecture: hidden_layer_sizes=(2, 8, 2), activation='relu'
+2025-09-11 01:01:08,880 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 01:01:09,267 [INFO] -     MLP Regressor for VAE -> GAN (exp3_large_relu) trained. Final Training MSE on vectors: 0.437269
+2025-09-11 01:01:09,267 [INFO] - --- Training MLP Bridge for GAN -> VAE (exp3_large_relu) ---
+2025-09-11 01:01:09,268 [INFO] -     Architecture: hidden_layer_sizes=(2, 8, 2), activation='relu'
+2025-09-11 01:01:09,268 [INFO] -     Fitting regressor... (This may take a minute)
+2025-09-11 01:01:09,731 [INFO] -     MLP Regressor for GAN -> VAE (exp3_large_relu) trained. Final Training MSE on vectors: 0.178663
+2025-09-11 01:01:09,731 [INFO] - 
+--- Running Qualitative Visualizations ---
+2025-09-11 01:01:10,776 [INFO] -     Performing GAN Inversion for visualization #1...
+2025-09-11 01:01:16,105 [INFO] -     Performing GAN Inversion for visualization #2...
+2025-09-11 01:01:21,630 [INFO] -     Performing GAN Inversion for visualization #3...
+2025-09-11 01:01:26,078 [INFO] -     3 visualization pairs created.
+2025-09-11 01:01:26,078 [INFO] - --- Evaluating Quantitative Quality for VAE->GAN ---
+2025-09-11 01:01:28,716 [INFO] - --- Quality Report for VAE->GAN (Config: relu, Layers: (2, 8, 2)) ---
+2025-09-11 01:01:28,716 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 01:01:28,716 [INFO] -     - Projected Image Classification Accuracy: 0.00%
+2025-09-11 01:01:28,717 [INFO] -     - Image Reconstruction MSE (Median): 0.130663 (+/- 0.025623)
+2025-09-11 01:01:28,717 [INFO] - --- Evaluating Quantitative Quality for GAN->VAE ---
+2025-09-11 01:01:31,815 [INFO] - --- Quality Report for GAN->VAE (Config: relu, Layers: (2, 8, 2)) ---
+2025-09-11 01:01:31,815 [INFO] -     - Evaluated on 1000 samples.
+2025-09-11 01:01:31,816 [INFO] -     - Projected Image Classification Accuracy: 0.00%
+2025-09-11 01:01:31,816 [INFO] -     - Image Reconstruction MSE (Median): 0.069020 (+/- 0.013524)
+2025-09-11 01:01:31,816 [INFO] - 
+--- Generating Latent Space plot for VAE ---
+2025-09-11 01:01:32,151 [INFO] -     Saved VAE latent space plot to 'outputs_mlp/final_vae_latent_space.png'
+2025-09-11 01:01:32,151 [INFO] - 
+--- Generating Latent Space plot for GAN ---
+2025-09-11 01:01:32,602 [INFO] -     Saved GAN latent space plot to 'outputs_mlp/final_gan_latent_space.png'
+2025-09-11 01:01:32,602 [INFO] - 
+
+Analysis complete. All outputs saved in 'outputs_mlp/' subdirectories.
+2025-09-11 01:01:32,602 [INFO] - A detailed log has been saved to 'outputs_mlp/experiment_log_2025-09-11_00-57-52.txt'
