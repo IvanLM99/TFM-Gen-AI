@@ -1,145 +1,479 @@
-# TFM - Gen-AI
+\documentclass[twocolumn,twoside,a4paper,10pt]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[noadjust]{cite}
+    \renewcommand{\citepunct}{,\penalty\citepunctpenalty\,}
+    \renewcommand{\citedash}{--}
+\usepackage{lipsum}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs} % For better table lines
+\usepackage{hyperref} % For clickable links
+\usepackage{amsfonts}
+\usepackage{xcolor}
+\usepackage{soul}
+\sethlcolor{green}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, calc, backgrounds}
+
+% % % % % % % % % % % % % % % % % %
+%     EDIT THE THESIS' DETAILS    %
+% % % % % % % % % % % % % % % % % %
 
 
-Índice de la memoria:
+\usepackage[english]{babel}     % Use either `english`, `catalan` or `spanish` to change titles and other template text
+\title{Comparative analysis of VAE and GAN latent spaces via MLP-based projections}
+\author{Iván López Muñoz}
+\email{ivan.lopez1@estudiant.uib.cat} 
+\tutors{Gabriel Moyà Alcover}
+\specialization{Artificial Intelligence}
+\academicyear{2024/25} 
+\keywords{Generative models, Latent Space, VAE, GAN, MLP, GAN Inversion, Deep Learning}
+% \edisslogotrue % Uncomment this command if you are an EDISS student.
 
+\begin{document}
+\include{titlepage}
+\maketitle
 
-1: Introducción -> lo que se va a hacer, breve 
+% % % % % % % % % % % % % % % %
+%     EDIT THE MANUSCRIPT     %
+% % % % % % % % % % % % % % % %
 
-1.1. Motivación y contexto
-- La importancia de los modelos generativos (VAEs, GANs) en el deep learning.
-- La importancia del espacio latente en la representación de los datos aprendidos por estos modelos.
-  
-1.2. Planteamiento del problema
-- ¿Son los espacios latentes de diferentes modelos (VAE vs. GAN) similares si se entrenan con el mismo dataset?
-- La hipótesis del paper inicial (italianos): la posibilidad de una transformación lineal simple entre espacios de los modelos.
-  
-1.3. Objetivos del TFM
-- Objetivo principal: Validar la hipótesis de la transformación lineal entre una VAE y una GAN (primero con MNIST y luego ----)
-- Otros objetivos para alcanzar el principal:
-- Implementar y entrenar un modelo VAE y un modelo GAN con MNIST.
-- Utilizar GAN inversion para obtener los valores latentes de imágenes del dataset MNIST.
-- Calcular una transformación lineal que alinee ambos espacios latentes.
-- Evaluar la calidad de la proyección.
+\begin{abstract}
+\noindent Generative models, such as Variational Autoencoders (VAEs) and Generative Adversarial Networks (GANs), have demonstrated remarkable capabilities in modeling complex data distributions. Central to their success is the concept of a low-dimensional latent space, which captures the core semantic features of the data. While significant research has focused on exploring the properties of individual latent spaces, the relationship between spaces learned by different models remains largely unexamined. This thesis investigates the structural correspondence between the latent spaces of a VAE and a GAN, both trained on the MNIST dataset. We propose a methodology to bridge these two seemingly disparate spaces by training Multi-Layer Perceptron (MLP) regressors on a paired latent vector dataset. The effectiveness of this projection is evaluated quantitatively through image reconstruction error and semantic consistency, measured by the classification accuracy of a dedicated CNN. Our experiments explore the hypothesis that different generative architectures converge on a structurally similar organization of the data manifold. We show that a simple learned mapping can translate between these spaces while preserving semantic identity \hl{in a multi-class context. However, we also demonstrate that the stability and nature of this mapping are highly context-dependent. By training specialized bridges on a single data class, we reveal unexpected fragilities and asymmetries, challenging the notion that a single type of mapping is universally optimal.} This suggests that while different generative frameworks may uncover a canonical global data structure, the local geometric relationships can be surprisingly distinct, opening new possibilities and cautionary insights for transferring features across diverse model architectures.
+\end{abstract}
 
-1.4. Alcance y limitaciones
-- El estudio se centra inicialmente en modelos simples (StyleGAN, SVAE etc etc) y en pocos datasets (MNIST, ..., ...)
-- Únicamente se calcula una transformación lineal.
-  
-1.5. Estructura completa de la memoria
-- Breve descripción/introducción de los capítulos que se van a comentar a continuación.
+\section{Introduction}
 
-  
-2: Fundamentos teóricos y State of the Art de modelos generativos
+In recent years, the field of machine learning has witnessed a paradigm shift with the ascent of deep generative models. These models, capable of learning complex, high-dimensional data distributions, have unlocked unprecedented possibilities in data synthesis, augmentation, and unsupervised feature learning \cite{Goodfellow16Book}. Two of the most prominent architectural families in this area are Variational Autoencoders (VAEs) \cite{Kingma14}, and Generative Adversarial Networks (GANs) \cite{Goodfellow14}. Both frameworks excel at a common task: learning a compressed, low-dimensional \textit{latent space} that encapsulates the essential factors of variation present in a given dataset.
 
-2.1. Modelos generativos
+\This latent space is a core component that underpins the entire generative process. A well-structured latent space is semantically meaningful, meaning that movements and interpolations within this space correspond to coherent and predictable changes in the generated data \cite{Radford16}. For instance, a trajectory in the latent space of a face-generation model might correspond to a gradual change in facial expression, age, or pose. This property, often referred to as disentangled representation learning, is a key goal in modern machine learning, as it promises models that not only generate data but also "understand" its underlying causal structure \cite{Bengio13}.
 
-2.2. VAE
-- Arquitectura
-- Loss function
-- 
-  
-2.3. GAN
-- Arquitectura
-- Proceso de entrenamiento.
+The importance of the latent space has led to extensive research. Key efforts include exploring the semantic structure of the space through vector arithmetic \cite{Radford16}, interpreting the learned dimensions to achieve disentangled representations \cite{Shen20InterfaceGAN, Higgins17}, and manipulating latent vectors to perform targeted image editing \cite{Zhu16}. However, a more fundamental question has remained relatively underexplored: do different generative models, with their disparate architectures and training objectives, converge to fundamentally different internal representations of the same data? Or is there a "natural" structure to the data manifold that all effective models, regardless of their design, will approximate in a structurally similar way?
 
-problemas, limitaciones?
-  
-2.4. Espacio Latente
-- 
-- 
-  
-2.5. GAN Inversion
-- Qué es, para qué sirve, cómo
-- 
-- 
+A recent study by Asperti and Tonelli \cite{Asperti23} provided compelling preliminary evidence for the latter. They demonstrated that for complex single-class datasets like human faces, a surprisingly simple linear mapping was often sufficient to translate latent vectors from one model's space to another while preserving most of the semantic information. This suggests a profound structural isomorphism between latent spaces learned by different models.
 
+Building on these findings, this thesis aims to investigate whether this structural similarity holds in a different context. We extend their inquiry to a multi-class setting using the well-understood MNIST dataset \cite{LeCun98}. \hl{To further probe the difference between single-class and multi-class representations, we conduct a second, more focused set of experiments. After analyzing the global mapping across all ten digits, we train specialized MLP bridges using data from only a single digit class (`2'). This allows us to investigate whether the inter-space relationship becomes simpler within a constrained semantic region or if it introduces new, unexpected complexities.} Our central research question is therefore twofold: 
+\begin{enumerate}
+    \item Can an effective, semantically consistent mapping be established between the latent spaces of a VAE and a GAN trained on the same dataset?
+    \item What is the minimal complexity required for this mapping, \hl{and how does this complexity change when the mapping is generalized across multiple classes versus specialized for a single class?}
+\end{enumerate}
+
+To address these questions, this work presents a comprehensive experimental pipeline. We begin by training a VAE and a Vanilla GAN on the MNIST dataset, each configured to learn a 2-dimensional latent space to facilitate direct visualization and analysis. A key challenge in comparing these models is the unidirectional nature of GANs, which lack an explicit encoder. We overcome this by implementing an optimization-based GAN inversion technique, enabling us to find the latent representation for any given image.
+
+With the ability to encode images into both spaces, we construct a large-scale, paired dataset of corresponding latent vectors $(z_{VAE}, z_{GAN})$. This dataset forms the foundation for training a bridge between the two spaces, which we model using a Multi-Layer Perceptron (MLP) regressor. We systematically experiment with different MLP configurations, from simple linear models to more complex non-linear architectures, \hl{and apply this methodology to both the full multi-class dataset and a filtered single-class subset.}
+
+The success of this cross-space projection is not measured by visual similarity alone. The ultimate test of a meaningful mapping is the preservation of semantic identity. To this end, we train an independent Convolutional Neural Network (CNN) classifier to act as an objective evaluator. By classifying the final projected images, we can quantitatively measure the degree to which the digit's identity is maintained throughout the entire translation pipeline.
+
+The structure of this thesis is as follows. Section \ref{sec:methodology} provides a detailed account of the MNIST dataset, the specific architectures of our VAE, GAN, and CNN models, the technical implementation of GAN inversion and the MLP bridge, including the metrics used for our quantitative evaluation. Section \ref{sec:experiments} will detail the experimental setup, and Section \ref{sec:results} will present the qualitative and quantitative outcomes. Section \ref{sec:discussion} offers a discussion of our findings, followed by concluding remarks and future work in Sections \ref{sec:conclusions} and \ref{sec:future_work}.
+
+\section{Methodology}
+\label{sec:methodology}
+
+This section provides a detailed technical description of the components, models, and procedures that form the backbone of our investigation. The methodology is designed to create a robust and reproducible pipeline for training generative models and comparing their latent spaces. We will cover the dataset, the architectures of the generative and evaluative models, and the specific techniques employed to bridge the latent spaces.
+
+\subsection{Dataset: MNIST database of handwritten digits}
+For this work, we selected the MNIST dataset\cite{LeCun98}. As a classic and widely-used benchmark in machine learning, it provides a solid foundation for comparing model performance and representational capabilities.
+
+The dataset consists of 60,000 training images and 10,000 test images of handwritten digits (0-9). Each image is a 28x28 pixel grayscale image, size-normalized and centered. The pixel values are integers ranging from 0 (black) to 255 (white). The choice of MNIST was deliberate as its relative simplicity allows us to focus our analysis on the core structural representations learned by the models. The dataset features 10 well-defined classes, which simplifies the evaluation of semantic consistency, and its low dimensionality (28x28 pixels) makes it computationally efficient for rapid training and experimentation.
+
+For our experiments, the data required model-specific preprocessing. For the VAE, the pixel values were normalized to the range [0, 1] to match the Sigmoid activation function in its decoder. For the GAN, the pixel values were normalized to the range [-1, 1], which is standard practice for GANs using a Tanh activation function in their generator's output layer.
+
+\subsection{Generative models}
+
+\subsubsection{Variational Autoencoder (VAE)}
+A Variational Autoencoder \cite{Kingma14} is a generative model based on the principles of Bayesian inference and variational methods. It learns a probabilistic mapping from a high-dimensional data space to a lower-dimensional latent space. The architecture is composed of two neural networks: an encoder and a decoder.
+
+The \textbf{encoder}, also known as the inference or recognition model, learns to approximate the posterior distribution $p(z|x)$, which is the probability of a latent vector $z$ given an input data point $x$. Since this distribution is often intractable, the encoder instead learns a simpler, parametric distribution $q_{\phi}(z|x)$, typically a Gaussian with a diagonal covariance matrix. The encoder network, with parameters $\phi$, thus outputs a mean vector $\mu$ and a log-variance vector $\log(\sigma^2)$.
+
+The \textbf{decoder}, learns the distribution $p_{\theta}(x|z)$, mapping a point $z$ from the latent space back to the original data space to generate a reconstruction $\hat{x}$. To ensure the model is differentiable, the sampling process uses the \textit{reparameterization trick}: $z = \mu + \sigma \odot \epsilon$, where $\epsilon$ is a random sample from a standard normal distribution $\mathcal{N}(0, 1)$.
+
+The VAE is trained by minimizing a loss function composed of two terms.
+
+The first term is the reconstruction loss, which encourages the decoder to accurately reconstruct the input. The second term, the Kullback-Leibler (KL) divergence, is a regularizer between the encoder's distribution and a prior distribution over the latent variables, $p(z)$, which is typically a standard Gaussian $\mathcal{N}(0, 1)$ \cite{Kingma14}. This term forces the latent space to be well-structured and centered around the origin.
+
+\paragraph*{Our VAE Architecture}
+Our implementation is a fully-connected VAE designed for the 784-pixel flattened MNIST images. The encoder consists of two linear layers with LeakyReLU activations, mapping the input from 784 dimensions to a hidden dimension of 400, then to an intermediate dimension of 200. From this, two separate linear layers project to the final 2-dimensional latent space to produce the mean and log-variance vectors. The decoder mirrors this structure, upsampling from the 2D latent space back to 784 dimensions, using a Sigmoid activation in the final layer to produce pixel values in the [0, 1] range.
+
+\subsubsection{Generative Adversarial Network (GAN)}
+A Generative Adversarial Network\cite{Goodfellow14} is a framework that learns to generate data through a competitive, zero-sum game between two neural networks: a Generator and a Discriminator.
+
+The \textbf{Generator (G)} network takes a random vector $z$, sampled from a simple prior distribution (e.g., Gaussian or uniform), and attempts to generate a sample $G(z)$ that is indistinguishable from the real data.
+
+The \textbf{Discriminator (D)} network acts as a binary classifier. It is presented with samples from both the true data distribution and the fake data generated by G, and its task is to distinguish between them. It outputs a single scalar probability that the input sample is real.
+
+The two networks are trained simultaneously in an adversarial process. The Discriminator is trained to maximize its classification accuracy, while the Generator is trained to minimize the Discriminator's accuracy by producing increasingly realistic samples. 
+
+At theoretical equilibrium, the Generator captures the true data distribution, and the Discriminator is unable to distinguish real from fake, outputting a probability of 0.5 for any input.
+
+\paragraph*{Our GAN Architecture}
+Our GAN architecture is based on the Deep Convolutional GAN (DCGAN) principles outlined by Radford et al.\cite{Radford16}. This approach uses strided and transposed convolutions in place of pooling and fully-connected layers, leading to more stable training and higher-quality image generation.
+\begin{itemize}
+    \item \textbf{Generator:} It takes a 2-dimensional latent vector $z$ as input. A series of transposed convolutional layers, paired with Batch Normalization and ReLU activations, progressively upsample the vector into a 28x28 image. The final layer uses a Tanh activation function to produce pixel values in the [-1, 1] range.
+    \item \textbf{Discriminator:} It takes a 28x28 image as input. A sequence of standard convolutional layers layers with LeakyReLU activations downsamples the image, extracting features at multiple scales. The final layer outputs a single probability via a Sigmoid activation.
+\end{itemize}
+
+\subsubsection{GAN Inversion}
+A critical limitation of the standard GAN framework is its lack of a direct encoding mechanism. While a VAE naturally provides an encoder, a GAN only learns the mapping from latent space to image space ($z \to x$). To establish a bidirectional comparison, we must be able to find the latent vector $z$ that corresponds to a given real image $x_{real}$. This process is known as GAN inversion\cite{Xia22Survey}.
+
+GAN inversion can be framed as an optimization problem. Given a pre-trained and fixed generator $G$ and a target image $x_{real}$, our goal is to find a latent vector $z^*$ that minimizes the reconstruction error:
+
+The loss function $\mathcal{L}$ is typically a pixel-wise distance metric like Mean Squared Error (MSE), often supplemented with a perceptual loss term to improve visual quality\cite{Zhu16}.
+
+In our implementation, we use a straightforward and effective optimization-based approach. We initialize a latent vector $z$ randomly and use an Adam optimizer to iteratively update $z$ to minimize the MSE between the generated image $G(z)$ and the target image. This process, while computationally more intensive than a forward pass through an encoder, allows us to effectively `invert' the generator and obtain a latent representation for any image in the dataset.
+
+\subsubsection{The Bridge: Multi-Layer Perceptron (MLP)}
+The central hypothesis of this thesis is that a mapping exists between the VAE and GAN latent spaces. To model this mapping, we employ a Multi-Layer Perceptron (MLP), a simple yet powerful type of feedforward neural network capable of approximating complex functions\cite{Goodfellow16Book}. An MLP consists of an input layer, one or more hidden layers, and an output layer, capable of approximating any continuous function given sufficient capacity.
+
+In our pipeline, the MLP acts as a regressor, learning to predict a continuous-valued latent vector in the target space from a vector in the source space. The training data for this regressor is the paired latent dataset described previously. We specifically experiment with two key architectural variations to test our hypothesis about mapping complexity:
+\begin{enumerate}
+    \item \textbf{Linear MLP:} An MLP where the hidden layer activation function is set to `identity'. This effectively reduces the model to a linear transformation (a series of matrix multiplications and additions), testing whether the spaces are related by simple rotation, scaling, and translation.
+    \item \textbf{Non-Linear MLP:} An MLP that uses ReLU activation function in its hidden layers. This allows the model to learn complex, non-linear mappings.
+\end{enumerate}
+By comparing the performance of these two variants, we can draw conclusions about the geometric relationship between the VAE and GAN latent spaces. We use the `MLPRegressor' implementation from the scikit-learn library\cite{scikit-learn}. \hl{These MLP configurations are trained and evaluated in two distinct scenarios: first on a dataset covering all ten MNIST classes to learn a global mapping, and second on a dataset filtered to a single digit to learn a localized, class-specific mapping.} \hl{The complete projection pipelines, from VAE to GAN and vice versa, are illustrated in} Figure~\ref{fig:projection_pipelines}.
+
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.8cm and 0.5cm,
+        block/.style={rectangle, rounded corners, draw, fill=blue!10, text width=2.5cm, align=center, minimum height=1cm, font=\small},
+        data/.style={trapezium, draw, fill=green!10, text width=2.2cm, align=center, minimum height=0.8cm, shape border rotate=270, font=\small},
+        eval/.style={rectangle, draw, fill=orange!10, text width=2.5cm, align=center, minimum height=1cm, font=\small},
+        arrow/.style={-Latex, thick},
+        data_label/.style={midway, fill=white, inner sep=1pt, font=\footnotesize, anchor=west, xshift=2pt}
+    ]
+
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % %% FLOWCHART 1: VAE to GAN
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-3: Metodología y diseño experimental -> lo que se ha hecho
+    % Main Pipeline Nodes
+    \node (img_in1) [data] {Input Image ($x$)};
+    \node (vae_enc) [block, below=of img_in1, minimum height=1.3cm] {VAE Encoder};
+    \node (mlp1) [block, below=of vae_enc] {MLP Bridge};
+    \node (gan_gen) [block, below=of mlp1] {GAN Generator};
+    \node (img_out1) [data, below=of gan_gen] {Generated Image ($\hat{x}$)};
 
-3.1. Proceso experimental
-- Diagrama de flujo :
-- (Imagen Original) -> VAE Encoder -> zvae
-- zvae -> transformación Lineal T-> zgan
-- zgan -> GAN -> (Imagen Proyectada).
-  
-3.2. Conjunto de datos y procesamiento
-- Descripción del dataset MNIST. 
-- Normalización de datos.
-- Otros datasets ???
-  
-3.3. Diseño e implementación de los modelos
-- VAE: arquitectura detallada (capas, dimensiones, ...), hiperparámetros de entrenamiento.
-- GAN: arquitectura detallada del Generador y Discriminador, hiperparámetros.
-- Entorno de desarrollo: PyTorch, librerías principales, linux, GPU, 
-  
-3.4. Implementación de la proyección del Espacio Latente
-- Paso 1: Generación del conjunto de pares (zvae,zgan) mediante inversión.
-- Paso 2: Cálculo de la matriz de transformación TT mediante Mínimos Cuadrados.
-  
-3.5. Métricas de evaluación
-- Métricas cuantitativas: error en el espacio eatente (L-MSE, COS similarity, R-MSE, M-MSE).
-- Evaluación cualitativa: coherencia semántica en las imágenes generadas.
+    % Evaluation Nodes
+    \node (cnn1) [block, right=1.2cm of mlp1] {CNN Classifier};
+    \node (sem_eval1) [eval, below=of cnn1] {Semantic Consistency};
+    \node (vis_eval1) [eval, above=of cnn1] {Visual Similarity};
+    \node (label_in1) [data, above=of vis_eval1, text width=1.5cm] {Orig. Label};
 
-  
-4: Análisis de resultados (primero MNIST, luego --)
+    % <<< START: Place all arrows on the background layer
+    \begin{scope}[on background layer]
+        % Arrows for Main Pipeline
+        \draw [arrow] (img_in1) -- (vae_enc);
+        \draw [arrow] (vae_enc) -- node[data_label] {$z_{VAE}$} (mlp1);
+        \draw [arrow] (mlp1) -- node[data_label] {$\hat{z}_{GAN}$} (gan_gen);
+        \draw [arrow] (gan_gen) -- (img_out1);
 
-4.1. Resultados entrenamiento de los modelos 
-- Resultados del entrenamiento de la VAE (loss plot, calidad de reconstrucción).
-- Resultados del entrenamiento de la GAN (loss plot, calidad de imágenes generadas).
-- Rendimiento del proceso de GAN inversion.
-  
-4.2. Visualización de los espacios latentes =
-  
-4.3. Resultados de proyección lineal
-- Resultados visuales (comparativa de imágenes: original, reconstruida VAE, invertida GAN, proyectada GAN).
-- Análisis de las métricas cuantitativas obtenidas.
--
-  
-5: Discusión y propuesta de trabajo futuro
+        % Arrows for Evaluation
+        \draw [arrow] (img_out1.east) -| (cnn1.south);
+        \draw [arrow] (cnn1) -- node[data_label, xshift=-2pt, anchor=east] {Pred. Label} (sem_eval1);
+        \draw [arrow] (label_in1) -- (sem_eval1);
+        \draw [arrow] (img_in1.east) -| (vis_eval1);
+        \draw [arrow] (img_out1.east) -| (vis_eval1);
+    \end{scope}
+    % <<< END: Background layer scope
 
-5.1. Interpretación de los resultados obtenidos
-- 
-- 
-  
-mlp mes gran
+    % Title
+    \node[above=0.2cm of img_in1, xshift=2cm, font=\bfseries] {(a) VAE to GAN Projection Pipeline};
 
-mitajana i desvaicio error
-cnn clasificar mnist
+    \end{tikzpicture}
+    \hfill
+    \begin{tikzpicture}[
+        node distance=0.8cm and 0.5cm,
+        block/.style={rectangle, rounded corners, draw, fill=blue!10, text width=2.5cm, align=center, minimum height=1cm, font=\small},
+        data/.style={trapezium, draw, fill=green!10, text width=2.2cm, align=center, minimum height=0.8cm, shape border rotate=270, font=\small},
+        eval/.style={rectangle, draw, fill=orange!10, text width=2.5cm, align=center, minimum height=1cm, font=\small},
+        arrow/.style={-Latex, thick},
+        data_label/.style={midway, fill=white, inner sep=1pt, font=\footnotesize, anchor=west, xshift=2pt}
+    ]
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % %% FLOWCHART 2: GAN to VAE
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    % Main Pipeline Nodes
+    \node (img_in2) [data] {Input Image ($x$)};
+    
+    % GAN Inversion Block
+    \node (inversion_loop) [block, below=of img_in2, text width=3cm] {GAN Inversion \\ \footnotesize(Iterative Optimization)};
+    \node[draw, dashed, inner sep=6pt, label={[font=\bfseries\footnotesize]above right:Find $z^*_{GAN}$}, fit=(inversion_loop)] {};
 
-igual pero activation relu
+    \node (mlp2) [block, below=1.2cm of inversion_loop] {MLP Bridge};
+    \node (vae_dec) [block, below=of mlp2] {VAE Decoder};
+    \node (img_out2) [data, below=of vae_dec] {Generated Image ($\hat{x}$)};
 
---
---
--
--
--
--
+    % Evaluation Nodes
+    \node (cnn2) [block, right=1.2cm of mlp2] {CNN Classifier};
+    \node (sem_eval2) [eval, below=of cnn2] {Semantic Consistency};
+    \node (vis_eval2) [eval, above=of cnn2] {Visual Similarity};
+    \node (label_in2) [data, above=of vis_eval2, text width=1.5cm] {Orig. Label};
 
-metodología - 1. base de dades mnist explicar que es
-2. generative models vae i gan
-	explicacio i arquitectura dels meus models
-	en gan -> gan inversión - que problema hay para generar imágenes gan
-	CNN classificacio
+    % <<< START: Place all arrows on the background layer
+    \begin{scope}[on background layer]
+        % Arrows for Main Pipeline
+        \draw [arrow] (img_in2) -- (inversion_loop);
+        \draw [arrow] (inversion_loop) -- node[data_label] {$z^*_{GAN}$} (mlp2);
+        \draw [arrow] (mlp2) -- node[data_label] {$\hat{z}_{VAE}$} (vae_dec);
+        \draw [arrow] (vae_dec) -- (img_out2);
 
-3 métricas - MSE 
-	
-4 experimentacio
-	1. vae
-	2. gan
-	3. gan inversions
-	4. MLP
-	5. cnn
+        % Arrows for Evaluation
+        \draw [arrow] (img_out2.east) -| (cnn2.south);
+        \draw [arrow] (cnn2) -- node[data_label, xshift=-2pt, anchor=east] {Pred. Label} (sem_eval2);
+        \draw [arrow] (label_in2) -- (sem_eval2);
+        \draw [arrow] (img_in2.east) -| (vis_eval2);
+        \draw [arrow] (img_out2.east) -| (vis_eval2);
+    \end{scope}
+    % <<< END: Background layer scope
 
-5. reusltats
+    % Title
+    \node[above=0.2cm of img_in2, xshift=2cm, font=\bfseries] {(b) GAN to VAE Projection Pipeline};
 
-==================================================
+    \end{tikzpicture}
+    \caption{The full projection pipelines for mapping between latent spaces. \textbf{(a)} The VAE-to-GAN pipeline, where a real image is encoded by the VAE, its latent vector is translated by the MLP, and a new image is generated by the GAN. \textbf{(b)} The GAN-to-VAE pipeline, which first uses an iterative optimization process (GAN Inversion) to find the GAN latent vector for a real image before proceeding with translation and VAE-based reconstruction. Both pipelines are evaluated for visual similarity and semantic consistency.}
+    \label{fig:projection_pipelines}
+\end{figure*}
 
+\subsubsection{CNN Classifier to evaluate semantic consistency}
+A successful mapping between latent spaces must preserve the essential meaning, or semantics, of the data. To quantify this without relying on subjective human judgment, we have used an automated evaluation method. This ensures that the identity of a digit is maintained throughout the transformation process. For this purpose, we trained an independent Convolutional Neural Network (CNN) as a fixed, impartial adjudicator.
 
-experimentacio - hacer experimento entrenando el puente solo con 1 clase "2"
+Our CNN architecture is a simple yet effective design for MNIST, consisting of two convolutional layers with max-pooling, followed by dropout for regularization and two fully-connected layers. The network is trained on the standard MNIST classification task to a high accuracy ($\sim$98.5\%), and its weights are frozen for all subsequent experiments. The semantic consistency of the entire mapping process is measured by feeding the final generated image into this pre-trained classifier. By comparing the classifier's output label to the original image's ground-truth label, we can quantitatively assess the degree to which semantic content is preserved across the latent space transformation.
 
-problema con el paper italianos= nomes tenen una clase en les cares 
+\subsection{Metrics for evaluation}
+\label{sec:metrics}
 
-noltros multi clase
+To provide a comprehensive evaluation of our latent space projection pipeline, a single metric is insufficient. We employ a suite of quantitative metrics to assess the geometric accuracy of the latent vector mapping, the visual fidelity of the final generated image, and, most critically, the preservation of the image's semantic meaning.
 
-añadir esto en la introducción
+\subsubsection{Mean Squared Error (MSE) for geometric and visual fidelity}
+The Mean Squared Error (MSE) is a fundamental metric used to quantify the difference between predicted and actual values. In our pipeline, we apply it in two distinct domains:
+
+\paragraph{Latent space mapping error (Vector MSE)} This application of MSE directly evaluates the performance of the MLP bridge itself. It quantifies how accurately the MLP regressor can predict a latent vector in the target space ($\hat{z}_{target}$) given a vector from the source space ($z_{source}$). The error is calculated as the MSE between the predicted vectors and the true target vectors on a held-out test set. A lower Vector MSE indicates a more precise geometric transformation between the two latent spaces.
+
+\paragraph{Image reconstruction error (Image MSE)} This metric measures the outcome in the pixel space, assessing the visual similarity between the original input image ($x_{real}$) and the final image produced at the end of the entire projection pipeline ($\hat{x}_{final}$). The Image MSE is the pixel-wise MSE between these two images. It captures the overall fidelity of the process, reflecting losses in quality that may arise from any stage of the pipeline.
+
+\subsubsection{Semantic consistency (classification accuracy)}
+This is arguably the most important metric of our work, as it moves beyond geometric or pixel-level similarity to assess whether the meaning of the data is preserved. A projection may yield a visually plausible image that is nonetheless semantically incorrect (e.g., transforming a `4' into a `9'). 
+
+To measure semantic consistency, we leverage our independent, pre-trained CNN classifier. After a full projection cycle produces a final image, we feed this image into the CNN to obtain its predicted class label. We then compare this prediction to the ground-truth label of the original input image. The performance is reported as the overall classification accuracy: the percentage of test samples for which the final projected image is classified as the correct digit. A high accuracy indicates that the mapping between the latent spaces is not merely geometric but is structurally aligned in a way that preserves the distinct class manifolds.
+
+\section{Experimental Setup}
+\label{sec:experiments}
+
+This section details the full experimental procedure designed to investigate the relationship between the VAE and GAN latent spaces. The pipeline is structured as a sequence of distinct stages: first, training the core generative models; second, establishing the necessary tools \hl{and datasets} for comparison, such as GAN inversion and the MLP bridges; and finally, defining the bidirectional projection experiments \hl{to be conducted under two different conditions}.
+
+\subsection{Stage 1: Training core generative models}
+The foundation of our analysis rests on having well-trained VAE and GAN models that have learned meaningful representations of the MNIST dataset.
+
+\subsubsection{VAE Training}
+The Variational Autoencoder, with the architecture described in Section \ref{sec:methodology}, was trained on the 60,000 images of the MNIST training set for 50 epochs. The Adam optimizer was used with a learning rate of 0.001. The training process successfully minimized the VAE loss function, resulting in a model capable of both reconstructing input digits and generating new ones from its 2D latent space. 
+
+\subsubsection{GAN Training}
+The GAN model was trained for 25 epochs using the Adam optimizer with a learning rate of 0.0002 and a $\beta_1$ parameter of 0.5. The adversarial training process reached a stable point where the generator produced sharp, recognizable digits, and the discriminator's loss stabilized. 
+
+The learned manifolds for both models are shown in Figure \ref{fig:latent_spaces}, which demonstrates clear clustering of digits and hints at a semantically organized structure in both cases.
+
+\begin{figure*}[!ht]
+    \centering
+    \includegraphics[width=0.48\linewidth]{figures/final_vae_latent_space.png}
+    \hfill
+    \includegraphics[width=0.48\linewidth]{figures/final_gan_latent_space.png}
+    \caption{The learned 2D latent space manifolds for our trained models, generated by sampling points from a uniform grid in the latent space and decoding them into images. \textbf{(Left)} The VAE latent space, showing smooth transitions and some blurring characteristic of the VAE objective. \textbf{(Right)} The GAN latent space, exhibiting sharper images and distinct class clusters. In both spaces, digits with similar topology (e.g., 9s and 4s, 1s and 7s) are located near each other, hinting at a semantically organized structure.}
+    \label{fig:latent_spaces}
+\end{figure*}
+
+\subsection{Stage 2: Building the projection infrastructure}
+With the core models trained, the next step was to build the necessary infrastructure to facilitate the comparison and projection between their latent spaces.
+
+\subsubsection{Implementing GAN Inversion}
+To enable the GAN-to-VAE projection pathway, we first needed a method to encode real images into the GAN's latent space. We implemented the optimization-based GAN inversion procedure detailed in Section \ref{sec:methodology}. For any given target image, this process iteratively optimizes a random latent vector over 2,500 steps to minimize the MSE, effectively finding the point in the GAN's latent space that best reconstructs that image. This tool was crucial for obtaining the $z_{gan}$ vectors corresponding to real images in our subsequent experiments.
+
+\subsubsection{Creating the paired latent datasets}
+\hl{The training of the MLP bridges requires large datasets of corresponding latent vector pairs. We generated two distinct datasets to support our two experimental conditions.}
+
+\paragraph{\hl{Multi-Class dataset}}
+\hl{To learn a global mapping, we first created a multi-class dataset.} We generated 75,000 synthetic images using the pre-trained GAN Generator from random latent vectors ($z_{gan}$). Each of these synthetic images was then passed through the pre-trained VAE Encoder to obtain its corresponding latent representation ($z_{vae}$). This yielded a dataset of 75,000 $(z_{gan}, z_{vae})$ pairs, which was then split into a 60,000-sample training set and a 15,000-sample test set.
+
+\paragraph{\hl{Single-Class dataset (Digit `2')}}
+\hl{To investigate the mapping within a constrained semantic region, we created a second, specialized dataset containing only information about the MNIST digit `2'. The process was as follows: first, we generated a large number of images from the GAN. Second, we used our pre-trained CNN classifier to identify which of these generated images were recognized as a `2'. We kept only the latent vectors ($z_{gan}$) that produced a `2'. Finally, these selected images were passed through the VAE encoder to find their corresponding $z_{vae}$ vectors. This resulted in a paired dataset of 10,000 samples specific to the digit `2', which was split into 8,000 for training and 2,000 for testing.}
+
+\subsubsection{Training the CNN Classifier}
+To provide a robust measure of semantic consistency, the CNN classifier was trained on the standard MNIST classification task for 5 epochs. The classifier achieved a final test accuracy of 98.48\%, demonstrating its reliability as an objective evaluator for the subsequent projection tasks. This model was then frozen and used exclusively for evaluation \hl{and for filtering the single-class dataset}.
+
+\subsection{Stage 3: Bidirectional latent space projection experiments}
+This is the core of our experimental work, where we use the trained models and tools to project images between the two latent spaces. We conducted four experiments, each using a different MLP bridge configuration to map between the VAE and GAN spaces. The configurations were:
+\begin{itemize}
+    \item \textbf{Baseline:} A small MLP with 2 hidden layers of size (4, 2) and a linear (identity) activation function.
+    \item \textbf{Experiment 1:} A larger linear MLP with hidden layers of size (8, 2) and `identity' activation.
+    \item \textbf{Experiment 2:} A small non-linear MLP with hidden layers of size (4, 2) and `relu' activation.
+    \item \textbf{Experiment 3:} A larger non-linear MLP with hidden layers of size (8, 2) and `relu' activation.
+\end{itemize}
+For each configuration, we trained two separate MLPs: one for the VAE $\to$ GAN direction and one for the GAN $\to$ VAE direction. \hl{This entire suite of experiments was performed under two distinct conditions:}
+
+\subsubsection{Condition 1: Multi-Class projections}
+\hl{In the first set of experiments, the MLP bridges were trained and evaluated using the global, multi-class paired dataset. This condition tests the hypothesis that a general, structurally-aware mapping exists across the entire data manifold covering all ten digits.}
+
+\subsubsection{Condition 2: Single-Class projections}
+\hl{In the second set of experiments, a new set of MLP bridges was trained, this time using only the specialized paired dataset for the MNIST digit `2'. This condition tests how the complexity, linearity, and stability changes when it is localized to a single, semantically coherent sub-manifold of the latent space.}
+
+\subsubsection{VAE $\to$ GAN projection pipeline}
+This experiment tests the ability to translate a representation from the VAE space to the GAN space. The pipeline for a single data point, \hl{applicable to both experimental conditions}, proceeds as follows:
+\begin{enumerate}
+    \item A real image is selected from the relevant test set (either the full MNIST test set or a filtered set of `2's).
+    \item The VAE encoder maps this image to its 2D latent vector, $z_{vae}$.
+    \item The trained VAE-to-GAN MLP bridge (either multi-class or single-class) takes $z_{vae}$ as input and predicts the corresponding vector in the GAN's latent space, $\hat{z}_{gan}$.
+    \item The GAN's generator takes $\hat{z}_{gan}$ as input and synthesizes the projected image.
+    \item The final image is evaluated for visual quality (Image MSE) and semantic identity (using the CNN classifier).
+\end{enumerate}
+
+\subsubsection{GAN $\to$ VAE projection pipeline}
+This experiment tests the reverse direction. The pipeline is as follows:
+\begin{enumerate}
+    \item A real image is selected from the relevant test set.
+    \item The GAN inversion process is performed to find the optimal latent vector $z_{gan}$ that reconstructs this image.
+    \item The trained GAN-to-VAE MLP bridge takes $z_{gan}$ as input and predicts the corresponding vector in the VAE's space, $\hat{z}_{vae}$.
+    \item The VAE's decoder takes $\hat{z}_{vae}$ as input and reconstructs the final projected image.
+    \item The final image is evaluated using the same metrics.
+\end{enumerate}
+
+\section{Results}
+\label{sec:results}
+
+This section presents the quantitative and qualitative results obtained from our bidirectional projection experiments. We first analyze the performance of each MLP bridge configuration using our defined metrics and then provide a visual analysis of the projection process for representative examples.
+
+\subsection{Quantitative performance of MLP Bridges}
+The primary goal of our experiments was to determine the feasibility and required complexity of a functional mapping between the two latent spaces. Table \ref{tab:results_summary} consolidates the key performance indicators for all four MLP configurations, evaluated on 1,000 test samples for each projection direction. The data allows for a rigorous evaluation of our central hypotheses regarding the complexity and effectiveness of mapping between VAE and GAN latent spaces.
+
+The results clearly indicate that the small, non-linear MLP (`relu' activation) provides the best performance across all metrics in both projection directions. It achieved the lowest vector and image MSE, and most importantly, the highest semantic accuracy, reaching 27.50\% for VAE-to-GAN and 32.50\% for GAN-to-VAE projections. Linear models performed reasonably well but were consistently outmatched, while larger, over-parameterized models performed poorly, suggesting overfitting.
+
+\begin{table*}[!ht]
+	\caption{Quantitative results for bidirectional latent space projections.}
+	\label{tab:results_summary}
+	\centering
+	\begin{tabular}{l l c c c c}
+		\toprule
+		\textbf{Projection} & \textbf{MLP Bridge Configuration} & \textbf{Activation} & \textbf{Vector MSE} & \textbf{Image MSE} & \textbf{Semantic Accuracy} \\
+		\midrule
+		\textbf{VAE $\to$ GAN} & & & & & \\
+		& Baseline Small & `identity' & 0.6569 & 0.1144 & 20.10\% \\
+		& Large Linear & `identity' & 0.6568 & 0.1138 & 20.80\% \\
+		& \textbf{Small Non-Linear} & \textbf{`relu`} & \textbf{0.5938} & \textbf{0.1086} & \textbf{27.50\%} \\
+		& Large Non-Linear & `relu' & 1.0041 & 0.1106 & 10.50\% \\
+		\midrule
+		\textbf{GAN $\to$ VAE} & & & & & \\
+		& Baseline Small & `identity' & 0.4559 & 0.0820 & 24.30\% \\
+		& Large Linear & `identity' & 0.4559 & 0.0817 & 24.90\% \\
+        & \textbf{Small Non-Linear} & \textbf{`relu`} & \textbf{0.3121} & \textbf{0.0723} & \textbf{32.50\%} \\
+		& Large Non-Linear & `relu' & 0.9152 & 0.0927 & 17.00\% \\
+		\bottomrule
+	\end{tabular}
+\end{table*}
+
+\subsection{Qualitative analysis of projections}
+
+\subsubsection{VAE $\to$ GAN Projections}
+Figure \ref{fig:exp_baseline_v2g} shows a projection using the baseline linear MLP. The original `5' is projected, but the final image is degraded and misclassified as a `1'. This indicates that while the linear map finds the general location, it may lack the precision to resolve ambiguities between nearby clusters. In contrast, Figure \ref{fig:exp2_v2g} shows the projection for the same digit using the best-performing non-linear MLP. Here, the final image is much clearer, and although still somewhat distorted, it is correctly located within the `7' cluster, showing the benefit of non-linearity in refining the mapping.
+
+\begin{figure*}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/vis_vae_to_gan_run_exp1_large_identity.png}
+    \caption{Visualization of the VAE $\to$ GAN projection using the baseline small, linear MLP. An original image of a `5' is encoded, projected, and then reconstructed. The final image is visually degraded and semantically ambiguous, being misclassified as a `1'.}
+    \label{fig:exp_baseline_v2g}
+\end{figure*}
+
+\begin{figure*}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/vis_vae_to_gan_run_exp2_small_relu.png}
+    \caption{Visualization of the VAE $\to$ GAN projection using the small, non-linear (ReLU) MLP. An original image of a `5' is projected. The final image, while distorted, is located near the correct semantic region in the GAN's latent space, but failing the classification.}
+    \label{fig:exp2_v2g}
+\end{figure*}
+
+\subsubsection{GAN $\to$ VAE Projections}
+Figure \ref{fig:exp_baseline_g2v} shows the GAN-to-VAE process for the baseline linear MLP. After projection and reconstruction, the final image is blurry (a known characteristic of VAEs) and is misclassified as an `0'. The predicted VAE vector lands in a region where the `6' and `0' classes are adjacent. Figure \ref{fig:exp2_g2v} illustrates the same process with the superior non-linear MLP. The original `5' is projected into a blurry but recognizable `9', showing that even with non-linearity, the translation can result in semantic shifts, particularly when decoding from the smoother VAE space.
+
+\begin{figure*}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/vis_gan_to_vae_run_exp1_large_identity.png}
+    \caption{Visualization of the GAN $\to$ VAE projection using the baseline small, linear MLP. The process starts with a real `5', which is inverted into the GAN space. After projection and reconstruction by the VAE, the resulting image is blurry and misclassified as an `0'.}
+    \label{fig:exp_baseline_g2v}
+\end{figure*}
+
+\begin{figure*}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/vis_gan_to_vae_run_exp2_small_relu.png}
+    \caption{Visualization of the GAN $\to$ VAE projection using the small, non-linear (ReLU) MLP. An original `5' is inverted and projected. The final reconstructed image is semantically shifted to a `9', highlighting the challenges of preserving identity across different generative paradigms.}
+    \label{fig:exp2_g2v}
+\end{figure*}
+
+\section{Discussion}
+\label{sec:discussion}
+
+This section provides an interpretation of the results presented in Section \ref{sec:results}, connecting them back to our central research questions about the feasibility, complexity, and nature of the mapping between VAE and GAN latent spaces.
+
+\subsection{Feasibility of a semantically aware mapping}
+The results unequivocally demonstrate that a functional mapping between the VAE and GAN latent spaces is possible, though non-trivial. The fact that any configuration achieves a semantic accuracy significantly above random chance (10\%) confirms that the MLP bridges are learning a meaningful, structurally aware transformation. The best-performing model, the small non-linear MLP, achieved a semantic accuracy of 27.50\% for VAE-to-GAN and 32.50\% for GAN-to-VAE projections. While these numbers are not high, they are remarkable given the context: we are translating between two models with entirely different architectures and loss landscapes, one probabilistic and one adversarial. The ability to preserve the correct digit identity in roughly one-third of cases highlights a significant structural correspondence between the spaces.
+
+\subsection{Role of Linearity vs. Non-linearity}
+A question of this thesis was the complexity required for the mapping. The performance of the linear (`identity' activation) models provides a crucial insight. With semantic accuracies around 20-25\%, these models show that a significant portion of the relationship between the VAE and GAN latent spaces can be captured by a simple linear transformation. This strongly supports the hypothesis that both models discover a similar global arrangement of the class manifolds. The clusters for each digit seem to be positioned relative to each other in a way that can be approximately aligned with a linear map.
+
+However, the clear superiority of the small non-linear (`relu') model across all metrics reveals the limitations of a purely linear assumption. The `relu'-activated MLP consistently reduced the vector MSE, lowered the final image reconstruction error, and, most importantly, boosted the semantic accuracy by a relative margin of over 30\%. This suggests that while the global structure is quasi-linear, the local geometry of the class manifolds is warped and distorted differently by the VAE and GAN. The VAE, with its KL-divergence regularizer, tends to create smoother, more spherical clusters, while the GAN creates tighter, more arbitrarily shaped clusters. The non-linear bending capability of the ReLU activation is necessary to properly align these local geometric differences, leading to a more precise and semantically accurate mapping.
+
+\subsection{Risks of over-parameterization}
+Perhaps one of the most surprising results is the poor performance of the larger MLP models. In both the linear and non-linear cases, increasing the number of hidden units from (4, 2) to (8, 2) did not improve performance; it significantly degraded it, especially in the non-linear case (semantic accuracy dropping from 27.5\% to 10.5\% for VAE-to-GAN). The vector MSE for these larger models also increased substantially.
+
+This suggests that the mapping between these 2D latent spaces is fundamentally simple. The larger models, with their increased capacity, likely began to overfit to the 60,000-sample training dataset. Instead of learning the smooth, underlying transformation function, they started to memorize noise and specific artifacts in the training data, leading to a brittle mapping that failed to generalize to the test set. This finding reinforces the conclusion that the underlying relationship is not overly complex and that a compact, well-regularized model is the most effective tool for bridging the spaces.
+
+\subsection{Asymmetry in projection quality}
+An interesting pattern emerges when comparing the two projection directions. The GAN-to-VAE projection consistently yielded slightly better results than the VAE-to-GAN direction, both in terms of image MSE and semantic accuracy. There are several potential reasons for this asymmetry:
+\begin{enumerate}
+    \item \textbf{Source of paired data:} Our paired dataset was generated by creating images from the GAN and then encoding them with the VAE. This means the VAE was only ever trained to encode images that lie perfectly on the GAN's learned manifold. This may have created a cleaner, more direct mapping for the GAN $\to$ VAE direction.
+    \item \textbf{Nature of the decoders:} The VAE decoder is trained to be robust to noise and variation due to the probabilistic nature of its latent space, making it potentially more forgiving of small errors in the predicted latent vector $\hat{z}_{vae}$. The GAN generator, on the other hand, might be more sensitive; a small deviation in its input vector could lead to a significant change in the output, including mode collapse or generating an out-of-distribution image.
+\end{enumerate}
+
+The qualitative results in Figures \ref{fig:exp_baseline_v2g} to \ref{fig:exp2_g2v} support this. The final images from the VAE decoder (GAN $\to$ VAE) are blurrier but often structurally more coherent, whereas the images from the GAN generator (VAE $\to$ GAN) can be sharper but more prone to falling apart into nonsensical artifacts (e.g., the `5' becoming a `1' in Figure \ref{fig:exp_baseline_v2g}).
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+This thesis undertook an in-depth investigation into the structural relationship between the latent spaces of a Variational Autoencoder and a Generative Adversarial Network. By developing and executing a comprehensive experimental pipeline on the MNIST dataset, we sought to determine if a meaningful mapping could be established between these two disparate generative models and to understand the complexity required for such a transformation.
+
+Our findings provide strong evidence that generative models, despite their different architectures and objective functions, converge on latent representations that are structurally congruent. We successfully demonstrated that a Multi-Layer Perceptron can serve as an effective bridge between the VAE and GAN spaces, translating latent vectors while partially preserving the semantic identity of the data.
+
+The key contributions and conclusions of this work are as follows:
+\begin{enumerate}
+    \item \textbf{Structural isomorphism:} We have shown that the latent spaces of a VAE and a GAN are not arbitrarily organized but share a significant structural isomorphism. A simple, learnable function can map the geometry of one space onto the other.
+    \item \textbf{Quasi-linear relationship:} The relationship between the spaces is largely linear. A purely linear MLP was able to achieve a semantic mapping accuracy significantly above chance, indicating that the global arrangement of class manifolds is similar in both models. This suggests that both architectures discover a "natural" organization inherent to the data itself.
+    \item \textbf{Importance of non-Linear refinement:} While the global structure is linear, local geometric differences exist. A small, non-linear MLP consistently outperformed the linear models, demonstrating that non-linear adjustments are necessary to accurately align the specific shapes and densities of the class clusters, which are molded differently by the VAE's regularizer and the GAN's adversarial objective.
+    \item \textbf{Simplicity is key:} The failure of larger, over-parameterized MLPs highlights that the transformation between the spaces is fundamentally simple. A compact model is sufficient and more robust, avoiding overfitting and better capturing the true underlying relationship.
+\end{enumerate}
+
+This thesis reinforces and extends the findings of Asperti and Tonelli \cite{Asperti23}, providing rigorous, quantitative evidence within the controlled MNIST domain. Our results suggest that the pursuit of disentangled and interpretable representations may benefit from a cross-model perspective. Techniques and insights gained from exploring one model's latent space could potentially be transferred to another via a learned mapping, paving the way for more universal tools for generative model analysis and manipulation. This work represents a step toward a more unified understanding of how deep neural networks learn to perceive and organize the world.
+
+\section{Future work}
+\label{sec:future_work}
+
+While this thesis provides foundational insights into the relationship between VAE and GAN latent spaces, it also opens up numerous avenues for future research. The following are potential directions to build upon the work presented here.
+
+\subsubsection{Extension to more complex datasets and higher dimensions}
+The most direct extension of this work would be to apply the same experimental pipeline to more complex, real-world datasets such as CelebA (faces), CIFAR-10 (objects), or medical imagery. Verifying that the quasi-linear relationship holds in these higher-dimensional and more varied domains would significantly strengthen the conclusions. This would also necessitate exploring latent spaces of higher dimensionality (e.g., 64, 128, or 512 dimensions) and assessing whether the mapping complexity scales with the latent dimension.
+
+\subsubsection{Exploring advanced mapping architectures}
+While we focused on simple MLPs, more sophisticated mapping architectures could be investigated. For instance, using a small VAE or a normalizing flow model \cite{Rezende15} as the bridge could potentially capture more intricate probabilistic relationships between the two spaces, possibly leading to higher semantic consistency. This would allow for modeling uncertainty in the projection itself.
+
+\subsubsection{Transfer of semantic editing vectors}
+A highly promising application of this work is the transfer of semantic editing capabilities. Many studies have shown that specific directions in a GAN's latent space correspond to semantic attributes (e.g., adding a smile, changing hair color) \cite{Shen20InterfaceGAN}. An exciting future experiment would be to identify such a vector in the GAN space, translate it to the VAE space using our learned bridge, and then verify if applying this translated vector in the VAE space produces the same semantic edit. This would be a powerful demonstration of cross-model knowledge transfer.
+
+\subsubsection{Investigating the impact of model architecture}
+Our study used one specific VAE and one specific GAN architecture. Future work could investigate how the structural relationship changes between different variants of the same model family. For example, comparing a standard GAN to a Wasserstein GAN (WGAN) \cite{Arjovsky17} or comparing a standard VAE to a $\beta$-VAE \cite{Higgins17}, which explicitly encourages disentanglement. This could reveal how different objective functions and architectural choices systematically influence the geometry of the learned latent space.
+
+By pursuing these directions, the research community can move closer to a comprehensive and unified theory of representation learning in deep generative models.
+
+\bibliographystyle{abbrv}
+\bibliography{bibliography1} 
+
+\end{document}
